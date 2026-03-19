@@ -1,0 +1,17 @@
+packages:
+  "recharts": "Data visualization for the dashboard charts"
+  "date-fns": "Human-readable date formatting for deadlines and effective dates"
+  "react-hook-form": "Form state management"
+  "@hookform/resolvers": "Zod integration for forms"
+  "zod": "Schema validation for form inputs"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility for merging tailwind classes without style conflicts"
+
+images:
+  - path: "artifacts/grc-dashboard/public/images/grc-logo.png"
+    description: "A clean, modern, minimalist logo mark for an enterprise Governance, Risk, and Compliance software platform. Geometric shape, navy blue and vibrant teal colors, transparent background."
+    aspect_ratio: "1:1"
+
+notes:
+  - Using generated orval hooks from @workspace/api-client-react but wrapping them locally for cache invalidation.
+  - The UI uses custom Tailwind v4 configuration in index.css.

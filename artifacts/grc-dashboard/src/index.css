@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+
+  --radius-xl: 1rem;
+  --radius-lg: 0.75rem;
+  --radius-md: 0.5rem;
+  --radius-sm: 0.25rem;
+}
+
+:root {
+  /* Enterprise Clean Palette */
+  --background: 210 20% 98%; /* Very Light Slate */
+  --foreground: 222 47% 11%; /* Deep Navy */
+  
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  
+  --primary: 221 83% 53%; /* Professional Blue */
+  --primary-foreground: 210 40% 98%;
+  
+  --secondary: 214 32% 91%; /* Slate 200 */
+  --secondary-foreground: 222 47% 11%;
+  
+  --muted: 214 32% 95%; /* Slate 100 */
+  --muted-foreground: 215 16% 47%; /* Slate 500 */
+  
+  --accent: 199 89% 48%; /* Bright Teal/Cyan */
+  --accent-foreground: 0 0% 100%;
+  
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  
+  --border: 214 32% 91%; /* Slate 200 */
+  --input: 214 32% 91%;
+  --ring: 221 83% 53%;
+  
+  --sidebar: 222 47% 11%; /* Dark Navy Sidebar */
+  --sidebar-foreground: 210 40% 98%;
+  --sidebar-accent: 217 33% 17%;
+  
+  /* Charts */
+  --chart-1: 221 83% 53%; /* Blue */
+  --chart-2: 199 89% 48%; /* Teal */
+  --chart-3: 214 32% 91%; /* Slate */
+  --chart-4: 262 83% 58%; /* Purple */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply font-semibold tracking-tight text-foreground;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400;
+}
+
+/* Base Form Input Styling */
+.form-input {
+  @apply w-full px-3 py-2 bg-background border border-border rounded-lg text-sm transition-all duration-200;
+  @apply focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20;
+  @apply placeholder:text-muted-foreground;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-foreground mb-1.5;
+}

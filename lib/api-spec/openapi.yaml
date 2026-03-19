@@ -1,0 +1,560 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Regulatory Tracking Dashboard API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: regulations
+    description: Regulatory law tracking
+  - name: gap-analysis
+    description: Policy gap analysis against frameworks
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /regulations:
+    get:
+      operationId: listRegulations
+      tags: [regulations]
+      summary: List all regulations
+      parameters:
+        - name: jurisdiction
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of regulations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Regulation"
+    post:
+      operationId: createRegulation
+      tags: [regulations]
+      summary: Create a new regulation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRegulationInput"
+      responses:
+        "201":
+          description: Created regulation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Regulation"
+
+  /regulations/{id}:
+    get:
+      operationId: getRegulation
+      tags: [regulations]
+      summary: Get a regulation by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Regulation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Regulation"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: updateRegulation
+      tags: [regulations]
+      summary: Update a regulation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRegulationInput"
+      responses:
+        "200":
+          description: Updated regulation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Regulation"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteRegulation
+      tags: [regulations]
+      summary: Delete a regulation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /regulations/stats:
+    get:
+      operationId: getRegulationStats
+      tags: [regulations]
+      summary: Get regulation statistics for dashboard
+      responses:
+        "200":
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegulationStats"
+
+  /gap-analysis/frameworks:
+    get:
+      operationId: listFrameworks
+      tags: [gap-analysis]
+      summary: List available compliance frameworks
+      responses:
+        "200":
+          description: List of frameworks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Framework"
+
+  /gap-analysis/policies:
+    get:
+      operationId: listPolicies
+      tags: [gap-analysis]
+      summary: List organization policies
+      responses:
+        "200":
+          description: List of policies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Policy"
+    post:
+      operationId: createPolicy
+      tags: [gap-analysis]
+      summary: Create an organization policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePolicyInput"
+      responses:
+        "201":
+          description: Created policy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Policy"
+
+  /gap-analysis/policies/{id}:
+    put:
+      operationId: updatePolicy
+      tags: [gap-analysis]
+      summary: Update a policy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePolicyInput"
+      responses:
+        "200":
+          description: Updated policy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Policy"
+    delete:
+      operationId: deletePolicy
+      tags: [gap-analysis]
+      summary: Delete a policy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /gap-analysis/analyze:
+    post:
+      operationId: analyzeGaps
+      tags: [gap-analysis]
+      summary: Analyze policy gaps against a framework
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GapAnalysisInput"
+      responses:
+        "200":
+          description: Gap analysis results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GapAnalysisResult"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    Regulation:
+      type: object
+      properties:
+        id:
+          type: integer
+        lawName:
+          type: string
+        jurisdiction:
+          type: string
+          enum: [federal, state, international]
+        status:
+          type: string
+          enum: [proposed, enacted, effective]
+        summary:
+          type: string
+        relevantPolicies:
+          type: array
+          items:
+            type: string
+        nextAction:
+          type: string
+        effectiveDate:
+          type: string
+          nullable: true
+        deadlineDate:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - lawName
+        - jurisdiction
+        - status
+        - summary
+        - relevantPolicies
+        - nextAction
+        - createdAt
+        - updatedAt
+
+    CreateRegulationInput:
+      type: object
+      properties:
+        lawName:
+          type: string
+        jurisdiction:
+          type: string
+          enum: [federal, state, international]
+        status:
+          type: string
+          enum: [proposed, enacted, effective]
+        summary:
+          type: string
+        relevantPolicies:
+          type: array
+          items:
+            type: string
+        nextAction:
+          type: string
+        effectiveDate:
+          type: string
+          nullable: true
+        deadlineDate:
+          type: string
+          nullable: true
+      required:
+        - lawName
+        - jurisdiction
+        - status
+        - summary
+        - relevantPolicies
+        - nextAction
+
+    RegulationStats:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+        byJurisdiction:
+          type: array
+          items:
+            type: object
+            properties:
+              jurisdiction:
+                type: string
+              count:
+                type: integer
+            required:
+              - jurisdiction
+              - count
+        byStatus:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+              count:
+                type: integer
+            required:
+              - status
+              - count
+        upcomingDeadlines:
+          type: array
+          items:
+            $ref: "#/components/schemas/Regulation"
+      required:
+        - totalCount
+        - byJurisdiction
+        - byStatus
+        - upcomingDeadlines
+
+    Framework:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/FrameworkCategory"
+      required:
+        - id
+        - name
+        - description
+        - categories
+
+    FrameworkCategory:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        controls:
+          type: array
+          items:
+            $ref: "#/components/schemas/FrameworkControl"
+      required:
+        - id
+        - name
+        - description
+        - controls
+
+    FrameworkControl:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - id
+        - name
+        - description
+
+    Policy:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        coveredControls:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [draft, active, under_review, retired]
+        lastReviewed:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - name
+        - description
+        - coveredControls
+        - status
+        - createdAt
+        - updatedAt
+
+    CreatePolicyInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        coveredControls:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [draft, active, under_review, retired]
+        lastReviewed:
+          type: string
+          nullable: true
+      required:
+        - name
+        - description
+        - coveredControls
+        - status
+
+    GapAnalysisInput:
+      type: object
+      properties:
+        frameworkId:
+          type: string
+      required:
+        - frameworkId
+
+    GapAnalysisResult:
+      type: object
+      properties:
+        frameworkId:
+          type: string
+        frameworkName:
+          type: string
+        totalControls:
+          type: integer
+        coveredControls:
+          type: integer
+        gapControls:
+          type: integer
+        coveragePercent:
+          type: number
+        gaps:
+          type: array
+          items:
+            $ref: "#/components/schemas/GapItem"
+        covered:
+          type: array
+          items:
+            $ref: "#/components/schemas/GapItem"
+      required:
+        - frameworkId
+        - frameworkName
+        - totalControls
+        - coveredControls
+        - gapControls
+        - coveragePercent
+        - gaps
+        - covered
+
+    GapItem:
+      type: object
+      properties:
+        controlId:
+          type: string
+        controlName:
+          type: string
+        categoryName:
+          type: string
+        description:
+          type: string
+        coveredByPolicies:
+          type: array
+          items:
+            type: string
+      required:
+        - controlId
+        - controlName
+        - categoryName
+        - description
+        - coveredByPolicies
